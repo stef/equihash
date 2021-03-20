@@ -26,3 +26,8 @@
 *.exe
 *.out
 *.app
+bench
+
+# other
+.arch
+python/equihash/__pycache__
