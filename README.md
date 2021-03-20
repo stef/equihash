@@ -6,7 +6,7 @@ This is a fork of https://github.com/khovratovich/equihash/ - it is changed to b
    - reading in arbitrary seeds, and
    - (de)serializing the solutions.
    - Wrapping all this in a library,
-   - providing a simple c API (solve/verify),
+   - providing a simple C API (solve/verify),
    - and providing python bindings to this.
 
 This is an optimized C++ implementation of Equihash, the [memory-hard Proof-of-Work
