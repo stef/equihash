@@ -2,6 +2,7 @@
 CC0 license
 */
 
+#include "equihash.hpp"
 #include "equihash.h"
 #include <sodium.h>
 #include <algorithm>

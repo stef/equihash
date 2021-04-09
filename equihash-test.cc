@@ -1,7 +1,7 @@
 /*Code by Dmitry Khovratovich, 2016
 CC0 license
 */
-#include "equihash.h"
+#include "equihash.hpp"
 
 #include <inttypes.h>
 #include <ctime>
