@@ -3,11 +3,14 @@ CC0 license
 */
 
 #include "equihash.hpp"
-#include "equihash.h"
 #include <sodium.h>
 #include <algorithm>
 #include <arpa/inet.h>
 #include <string.h>
+
+extern "C" {
+#include "equihash.h"
+}
 
 //const int NONCE_LENGTH=24; //Length of nonce in bytes;
 const int MAX_NONCE = 0xFFFFF;
