@@ -252,7 +252,7 @@ int solve(const unsigned n, const unsigned k, const uint8_t *seed, const size_t 
   Equihash equihash(n,k,seed, seed_len);
   Proof p = equihash.FindProof();
   p.serialize(csol, csol_len);
-  return 0;
+  return 1;
 }
 
 int verify(const unsigned n, const unsigned k, const uint8_t *seed, const size_t seed_len, const uint8_t *sol, const size_t sol_len) {
