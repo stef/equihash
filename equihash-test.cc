@@ -2,6 +2,9 @@
 CC0 license
 */
 #include "equihash.hpp"
+extern "C" {
+#include "equihash.h"
+}
 
 #include <inttypes.h>
 #include <ctime>
@@ -49,31 +52,6 @@ static uint64_t rdtsc(void) {
 #endif
 }
 
-void TestEquihash(const unsigned n, const unsigned k, const uint8_t *seed, const uint16_t seed_len) {
-  Equihash equihash(n,k,seed, seed_len);
-  clock_t cstart, cend;
-  cstart = clock();
-  uint64_t start= rdtsc();
-  Proof p = equihash.FindProof();
-  uint64_t end= rdtsc();
-  cend = clock();
-  printf("%2.2f %f ", (double)(end - start) / (1UL << 20), ((double) (cend - cstart)) / CLOCKS_PER_SEC);
-
-  //p.dump();
-  uint8_t csol[p.solsize+4];
-  p.serialize(csol, sizeof(csol));
-
-  Proof p2 = unserialize(n,k,seed,seed_len, csol, sizeof(csol));
-  //p2.dump();
-  assert(p==p2);
-  cstart = clock();
-  start = rdtsc();
-  p2.verify();
-  end = rdtsc();
-  cend = clock();
-  printf("%2.2f %f\n", (double)(end - start) / (1UL << 20), ((double) (cend - cstart)) / CLOCKS_PER_SEC);
-}
-
 static void fatal(const char *error) {
   fprintf(stderr, "Error: %s\n", error);
   exit(1);
@@ -91,7 +69,7 @@ static void usage(const char *cmd) {
 
 
 int main(int argc, char *argv[]) {
-  uint32_t n = 60, k=4;
+  uint32_t n = 60, k=4, iter=10;
   char *seedfn=NULL;
   if (argc < 2) {
     usage(argv[0]);
@@ -132,7 +110,21 @@ int main(int argc, char *argv[]) {
         fatal("missing -k argument");
       }
     }
-    if (!strcmp(a, "-s")) {
+    else if (!strcmp(a, "-i")) {
+      if (i < argc - 1) {
+        i++;
+        input = strtoul(argv[i], NULL, 10);
+        if (input == 0) {
+          fatal("bad numeric input for -i");
+        }
+        iter = input;
+        continue;
+      }
+      else {
+        fatal("missing -i argument");
+      }
+    }
+    else if (!strcmp(a, "-s")) {
         if (i < argc - 1) {
             i++;
             seedfn = argv[i];
@@ -172,11 +164,48 @@ int main(int argc, char *argv[]) {
   //for (unsigned i = 0; i < SEED_LENGTH; ++i) {
   //    printf(" %02x", seed[i]);
   //}
-  printf("Memory:\t\t%" PRIu64 "KiB\n", ((((uint32_t)1) << (n / (k + 1)))*LIST_LENGTH*k*sizeof(uint32_t)) / (1UL << 10));
-  for(int i=0; i<100; i++) {
-    TestEquihash(n,k,seed, seed_len);
-    seed[0]++;
+  printf("%d %d %" PRIu64 "KiB\t%" PRIu64 "\t", n, k, ((((uint32_t)1) << (n / (k + 1)))*LIST_LENGTH*k*sizeof(uint32_t)) / (1UL << 10), solsize(n,k));
+  double solve_tics=0, verify_tics=0;
+  double solve_time=0,  verify_time=0;
+  for(uint32_t i=0; i<iter; i++) {
+     Equihash equihash(n,k,seed, seed_len);
+     clock_t cstart, cend;
+     cstart = clock();
+     uint64_t start= rdtsc();
+     Proof p = equihash.FindProof();
+     uint64_t end= rdtsc();
+     cend = clock();
+     solve_tics+=(double)(end - start) / (1UL << 20);
+     solve_time+=(double)(cend - cstart) / CLOCKS_PER_SEC;
+     if(p.inputs.size()==0) {
+       fprintf(stderr,"no solution found\n");
+       continue;
+     }
+     //p.dump();
+     uint8_t csol[p.solsize+4];
+     p.serialize(csol, sizeof(csol));
+
+     Proof p2 = unserialize(n,k,seed,seed_len, csol, sizeof(csol));
+     //p2.dump();
+     if(!(p==p2)) {
+       p.dump();
+       p2.dump();
+       fflush(stdout);
+     }
+     assert(p==p2);
+     cstart = clock();
+     start = rdtsc();
+     p2.verify();
+     end = rdtsc();
+     cend = clock();
+     verify_tics+=(double)(end - start) / (1UL << 20);
+     verify_time+=(double)(cend - cstart) / CLOCKS_PER_SEC;
+
+     seed[0]++;
   }
+
+  printf("%2.2f\t%f\t", solve_tics / iter, solve_time / iter);
+  printf("%2.2f\t%f\n", verify_tics / iter, verify_time / iter);
 
   return 0;
 }
