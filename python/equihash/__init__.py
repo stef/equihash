@@ -29,8 +29,11 @@ if not equihashlib._name:
     raise ValueError('Unable to find libequihash')
 
 def __check(code):
-    if code != 0:
+    if code == 0:
         raise ValueError
+
+def solsize(n,k):
+    return equihashlib.solsize(n,k)
 
 def solve(n, k, seed):
     sol_len = equihashlib.solsize(n,k)
