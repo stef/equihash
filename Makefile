@@ -20,4 +20,4 @@ $(PREFIX)/include/equihash.h: equihash.h
 	cp $< $@
 
 clean:
-	rm bench libequihash.so
+	rm -f bench libequihash.so
