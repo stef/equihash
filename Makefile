@@ -5,8 +5,12 @@ SOEXT?=so
 
 all: bench libequihash.so
 
-libequihash.so: equihash.cc equihash.h equihash.hpp Makefile
-	$(CXX) -shared $(CXXFLAGS) -Wl,-soname,libequihash.so -o libequihash.so equihash.cc $(LIBS)
+android: EXTRA_SOURCES=jni.cc
+android: CXXFLAGS+=-I$(SODIUM) -I$(SODIUM)/sodium -L.
+android: libequihash.so
+
+libequihash.so: equihash.cc equihash.h equihash.hpp Makefile $(EXTRA_SOURCES)
+	$(CXX) -shared $(CXXFLAGS) -Wl,-soname,libequihash.so -o libequihash.so equihash.cc $(EXTRA_SOURCES) $(LIBS)
 
 bench: equihash.cc equihash.hpp equihash-test.cc Makefile libequihash.so
 	$(CXX) -Wall -g -march=native -O3 -std=c++17 equihash-test.cc $(LIBS) -L. -lequihash -o bench
