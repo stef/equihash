@@ -16,10 +16,10 @@ JNIEXPORT jbyteArray JNICALL Java_org_hsbp_equihash_Equihash_solve(JNIEnv *env,
 	int result = solve(n, k, (const uint8_t*)bufferPtrSeed, seedLen,
 			(uint8_t*)bufferPtrCSol, csolLen);
 
-	env->ReleaseByteArrayElements(csol, bufferPtrCSol, result ? JNI_ABORT : 0);
+	env->ReleaseByteArrayElements(csol, bufferPtrCSol, result ? 0 : JNI_ABORT);
 	env->ReleaseByteArrayElements(seed, bufferPtrSeed, JNI_ABORT);
 
-	return result ? NULL : csol;
+	return result ? csol : NULL;
 }
 
 JNIEXPORT jboolean JNICALL Java_org_hsbp_equihash_Equihash_verify(JNIEnv *env,
