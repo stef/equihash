@@ -21,12 +21,15 @@ libequihash.pc:
 	echo "prefix=$(PREFIX)" >libequihash.pc
 	cat libequihash.pc.skel >>libequihash.pc 
 
-install: $(PREFIX)/lib/libequihash.$(SOEXT) $(PREFIX)/include/equihash.h
+install: $(PREFIX)/lib/libequihash.$(SOEXT) $(PREFIX)/include/equihash.h $(PREFIX)/share/pkgconfig/libequihash.pc
 
 $(PREFIX)/lib/libequihash.$(SOEXT): libequihash.$(SOEXT)
 	cp $< $@
 
 $(PREFIX)/include/equihash.h: equihash.h
+	cp $< $@
+
+$(PREFIX)/share/pkgconfig/libequihash.pc: libequihash.pc
 	cp $< $@
 
 clean:
