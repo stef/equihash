@@ -17,6 +17,10 @@ libequihash.so: equihash.cc equihash.h equihash.hpp Makefile $(EXTRA_SOURCES)
 bench: equihash.cc equihash.hpp equihash-test.cc Makefile libequihash.so
 	$(CXX) -Wall -march=native -O3 -std=c++17 equihash-test.cc $(LIBS) -L. -lequihash -o bench
 
+libequihash.pc:
+	echo "prefix=$(PREFIX)" >libequihash.pc
+	cat libequihash.pc.skel >>libequihash.pc 
+
 install: $(PREFIX)/lib/libequihash.$(SOEXT) $(PREFIX)/include/equihash.h
 
 $(PREFIX)/lib/libequihash.$(SOEXT): libequihash.$(SOEXT)
@@ -26,4 +30,4 @@ $(PREFIX)/include/equihash.h: equihash.h
 	cp $< $@
 
 clean:
-	rm -f bench libequihash.so
+	rm -f bench libequihash.so libequihash.pc

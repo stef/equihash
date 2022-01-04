@@ -1,0 +1,7 @@
+includedir=${prefix}/include
+
+Name: libequihash
+Description: Implementation of the equihash PoW protocol
+Version: 1.0.0
+Cflags: -I${includedir}/foo
+Libs: -lequihash
