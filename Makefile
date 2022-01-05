@@ -30,6 +30,7 @@ $(PREFIX)/include/equihash.h: equihash.h
 	cp $< $@
 
 $(PREFIX)/share/pkgconfig/libequihash.pc: libequihash.pc
+	mkdir -p $(PREFIX)/share/pkgconfig/
 	cp $< $@
 
 clean:
