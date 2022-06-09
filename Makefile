@@ -25,7 +25,7 @@ bench: equihash.cc equihash.hpp equihash-test.cc Makefile libequihash.so
 	$(CXX) -Wall -march=native -O3 -std=c++17 equihash-test.cc $(LIBS) -L. -lequihash -o bench
 
 libequihash.pc:
-	echo "prefix=$(DESTDIR)$(PREFIX)" >libequihash.pc
+	echo "prefix=$(PREFIX)" >libequihash.pc
 	cat libequihash.pc.skel >>libequihash.pc 
 
 install: $(DESTDIR)$(PREFIX)/lib/libequihash.$(SOEXT) $(DESTDIR)$(PREFIX)/lib/libequihash.a $(DESTDIR)$(PREFIX)/include/equihash.h $(DESTDIR)$(PREFIX)/share/pkgconfig/libequihash.pc
