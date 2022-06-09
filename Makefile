@@ -3,6 +3,7 @@ LIBS=-lsodium
 PREFIX?=/usr/local
 SOEXT?=so
 EXTRA_CXXFLAGS=-march=native -fstack-clash-protection -fcf-protection=full
+INSTALL?=install
 
 all: bench libequihash.so libequihash.a
 
@@ -30,17 +31,17 @@ libequihash.pc:
 install: $(DESTDIR)$(PREFIX)/lib/libequihash.$(SOEXT) $(DESTDIR)$(PREFIX)/lib/libequihash.a $(DESTDIR)$(PREFIX)/include/equihash.h $(DESTDIR)$(PREFIX)/share/pkgconfig/libequihash.pc
 
 $(DESTDIR)$(PREFIX)/lib/libequihash.$(SOEXT): libequihash.$(SOEXT)
-	cp $< $@
+	$(INSTALL) -D $< $@
+
 
 $(DESTDIR)$(PREFIX)/lib/libequihash.a: libequihash.a
-	cp $< $@
+	$(INSTALL) -D $< $@
 
 $(DESTDIR)$(PREFIX)/include/equihash.h: equihash.h
-	cp $< $@
+	$(INSTALL) -D $< $@
 
 $(DESTDIR)$(PREFIX)/share/pkgconfig/libequihash.pc: libequihash.pc
-	mkdir -p $(PREFIX)/share/pkgconfig/
-	cp $< $@
+	$(INSTALL) -D $< $@
 
 clean:
 	rm -f bench libequihash.so libequihash.pc libequihash.a equihash.o
