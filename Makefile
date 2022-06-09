@@ -24,21 +24,21 @@ bench: equihash.cc equihash.hpp equihash-test.cc Makefile libequihash.so
 	$(CXX) -Wall -march=native -O3 -std=c++17 equihash-test.cc $(LIBS) -L. -lequihash -o bench
 
 libequihash.pc:
-	echo "prefix=$(PREFIX)" >libequihash.pc
+	echo "prefix=$(DESTDIR)$(PREFIX)" >libequihash.pc
 	cat libequihash.pc.skel >>libequihash.pc 
 
-install: $(PREFIX)/lib/libequihash.$(SOEXT) $(PREFIX)/lib/libequihash.a $(PREFIX)/include/equihash.h $(PREFIX)/share/pkgconfig/libequihash.pc
+install: $(DESTDIR)$(PREFIX)/lib/libequihash.$(SOEXT) $(DESTDIR)$(PREFIX)/lib/libequihash.a $(DESTDIR)$(PREFIX)/include/equihash.h $(DESTDIR)$(PREFIX)/share/pkgconfig/libequihash.pc
 
-$(PREFIX)/lib/libequihash.$(SOEXT): libequihash.$(SOEXT)
+$(DESTDIR)$(PREFIX)/lib/libequihash.$(SOEXT): libequihash.$(SOEXT)
 	cp $< $@
 
-$(PREFIX)/lib/libequihash.a: libequihash.a
+$(DESTDIR)$(PREFIX)/lib/libequihash.a: libequihash.a
 	cp $< $@
 
-$(PREFIX)/include/equihash.h: equihash.h
+$(DESTDIR)$(PREFIX)/include/equihash.h: equihash.h
 	cp $< $@
 
-$(PREFIX)/share/pkgconfig/libequihash.pc: libequihash.pc
+$(DESTDIR)$(PREFIX)/share/pkgconfig/libequihash.pc: libequihash.pc
 	mkdir -p $(PREFIX)/share/pkgconfig/
 	cp $< $@
 
