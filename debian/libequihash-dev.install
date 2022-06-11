@@ -1,0 +1,3 @@
+usr/include/equihash.h
+usr/lib/libequihash.a
+usr/share/pkgconfig/libequihash.pc

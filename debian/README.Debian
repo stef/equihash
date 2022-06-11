@@ -1,0 +1,8 @@
+libequihash for Debian
+
+This is an optimized C++ implementation of Equihash,
+the memory-hard Proof-of-Work with fast verification.
+Equihash is designed by Alex Biryukov and Dmitry Khovratovich,
+cryptographers at the University of Luxembourg.
+
+ -- Stefan Marsiske <sphinx@ctrlc.hu>  Thu, 09 Jun 2022 21:09:55 +0200

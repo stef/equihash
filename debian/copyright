@@ -1,0 +1,20 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: libequihash
+Upstream-Contact: Stefan Marsiske <sphinx@ctrlc.hu>
+Source: https://github.com/stef/equihash/
+Files:     .gitignore
+           Makefile
+           README.md
+           equihash-test.cc
+           equihash.cc
+           equihash.h
+           equihash.hpp
+           jni.cc
+           libequihash.pc.skel
+           python/MANIFEST.in
+           python/README.md
+           python/setup.py
+           python/test.py
+           python/equihash/__init__.py
+Copyright: 2016 Dmitry Khovratovich <khovratovich@gmail.com>, 2021-21 Stefan Marsiske <sphinx@ctrlc.hu>
+License:   LGPL-3.0-or-later
