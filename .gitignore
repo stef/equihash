@@ -31,3 +31,4 @@ bench
 # other
 .arch
 python/equihash/__pycache__
+*.pc
