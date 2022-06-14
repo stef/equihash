@@ -1,4 +1,4 @@
-CXXFLAGS=-Wall -O3 -std=c++17 -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fasynchronous-unwind-tables -fpic -Werror=format-security -Wl,-z,defs -Wl,-z,relro -ftrapv -Wl,-z,noexecstack
+CXXFLAGS=-Wall -g -O3 -std=c++17 -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fasynchronous-unwind-tables -fpic -Werror=format-security -Wl,-z,defs -Wl,-z,relro -ftrapv -Wl,-z,noexecstack
 LIBS=-lsodium
 PREFIX?=/usr/local
 SOEXT?=so
@@ -16,7 +16,7 @@ equihash.o: equihash.cc equihash.h equihash.hpp Makefile
 	$(CXX) -c $(CXXFLAGS) $(EXTRA_CXXFLAGS) -o equihash.o equihash.cc
 
 libequihash.so: equihash.o Makefile $(EXTRA_SOURCES)
-	$(CXX) -shared $(CXXFLAGS) $(EXTRA_CXXFLAGS) -Wl,-soname,libequihash.so -o libequihash.so equihash.o $(EXTRA_SOURCES) $(LIBS)
+	$(CXX) -shared $(CXXFLAGS) $(EXTRA_CXXFLAGS) -Wl,-soname,libequihash.so.0 -o libequihash.so equihash.o $(EXTRA_SOURCES) $(LIBS)
 
 libequihash.a: equihash.o
 	ar rcs $@ $^
@@ -26,7 +26,7 @@ bench: equihash.cc equihash.hpp equihash-test.cc Makefile libequihash.so
 
 libequihash.pc:
 	echo "prefix=$(PREFIX)" >libequihash.pc
-	cat libequihash.pc.skel >>libequihash.pc 
+	cat libequihash.pc.skel >>libequihash.pc
 
 install: $(DESTDIR)$(PREFIX)/lib/libequihash.$(SOEXT) $(DESTDIR)$(PREFIX)/lib/libequihash.a $(DESTDIR)$(PREFIX)/include/equihash.h $(DESTDIR)$(PREFIX)/share/pkgconfig/libequihash.pc
 
@@ -35,13 +35,13 @@ $(DESTDIR)$(PREFIX)/lib/libequihash.$(SOEXT): libequihash.$(SOEXT)
 
 
 $(DESTDIR)$(PREFIX)/lib/libequihash.a: libequihash.a
-	$(INSTALL) -D $< $@
+	$(INSTALL) -D -m 0644 $< $@
 
 $(DESTDIR)$(PREFIX)/include/equihash.h: equihash.h
-	$(INSTALL) -D $< $@
+	$(INSTALL) -D -m 0644 $< $@
 
 $(DESTDIR)$(PREFIX)/share/pkgconfig/libequihash.pc: libequihash.pc
-	$(INSTALL) -D $< $@
+	$(INSTALL) -D -m 0644 $< $@
 
 clean:
 	rm -f bench libequihash.so libequihash.pc libequihash.a equihash.o

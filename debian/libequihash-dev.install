@@ -1,3 +1,4 @@
+#! /usr/bin/dh-exec
 usr/include/equihash.h
-usr/lib/libequihash.a
 usr/share/pkgconfig/libequihash.pc
+usr/lib/libequihash.a => usr/lib/${DEB_HOST_MULTIARCH}/libequihash.a

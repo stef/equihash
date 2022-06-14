@@ -2,7 +2,7 @@ Source: libequihash
 Section: utils
 Priority: optional
 Maintainer: Stefan Marsiske <sphinx@ctrlc.hu>
-Build-Depends: debhelper-compat (= 13), dh-python, python3-all
+Build-Depends: debhelper-compat (= 13), dh-python, python3-all, dh-exec (>=0.3)
 Standards-Version: 4.5.1
 Homepage: https://github.com/stef/equihash/
 Rules-Requires-Root: no
@@ -15,8 +15,8 @@ Depends: libequihash (<< ${source:Upstream-Version}.0~),
          ${misc:Depends},
          ${python3:Depends}
 Description: This is a python-wrapper for libequihash,
-  an optimized C++ implementation of Equihash, the
-  memory-hard Proof-of-Work with fast verification.
+ an optimized C++ implementation of Equihash, the
+ memory-hard Proof-of-Work with fast verification.
 
 Package: libequihash-dev
 Section: libdevel
@@ -24,13 +24,16 @@ Architecture: any
 Multi-Arch: same
 Depends: libequihash (= ${binary:Version}), ${misc:Depends}
 Description: Development files for libequihash.
+ Equihash is an optimized C++ implementation of a
+ memory-hard Proof-of-Work algorithm with fast verification.
 
 Package: libequihash
 Section: libs
 Architecture: any
 Multi-Arch: same
+Depends: ${misc:Depends}
 Pre-Depends: ${misc:Pre-Depends},
    build-essential,
    libsodium23 (>= 1.0.18)
 Description: This library contains an optimized C++ implementation
-  of Equihash, the memory-hard Proof-of-Work with fast verification.
+ of Equihash, the memory-hard Proof-of-Work with fast verification.

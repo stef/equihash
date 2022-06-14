@@ -6,15 +6,10 @@ export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
 export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 export PYBUILD_NAME = equihash
 
+DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH) 
 export PREFIX=/usr
 
 %:
+	#  dh_shlibdeps -Llibequihash -l${PWD}/debian/libequihas/usr/lib
 	dh $@ -p libequihash-dev -p libequihash 
 	dh $@ -p python3-equihash --with python3 --buildsystem=pybuild --sourcedirectory=python
-
-#override_dh_auto_install:
-#	dh_auto_install -- PREFIX=/usr --sourcedirectory=python
-#	dh_auto_install -- PREFIX=/usr
-
-#override_dh_install:
-#	dh_install --list-missing -X.pyc -X.pyo
