@@ -64,3 +64,10 @@ repository is copyright (c) 2016 Dmitry Khovratovich (University of Luxembourg) 
 [CC0 license](https://creativecommons.org/about/cc0).
 
 The license is GPL-compatible.
+
+## Credits
+
+This project was funded through the NGI0 PET Fund, a fund established
+by NLnet with financial support from the European Commission's Next
+Generation Internet programme, under the aegis of DG Communications
+Networks, Content and Technology under grant agreement No 825310.
