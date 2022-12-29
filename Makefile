@@ -5,6 +5,11 @@ SOEXT?=so
 EXTRA_CXXFLAGS=-march=native -fstack-clash-protection -fcf-protection=full
 INSTALL?=install
 
+SYS=$(shell gcc -dumpmachine)
+ifneq (, $(findstring i386, $(SYS)))
+    EXTRA_CXXFLAGS=-march=native -fstack-clash-protection
+endif
+
 all: bench libequihash.so libequihash.a
 
 android: EXTRA_SOURCES=jni.cc
