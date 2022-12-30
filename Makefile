@@ -2,12 +2,12 @@ CXXFLAGS=-Wall -g -O3 -std=c++17 -fstack-protector-strong -D_FORTIFY_SOURCE=2 -f
 LIBS=-lsodium
 PREFIX?=/usr/local
 SOEXT?=so
-EXTRA_CXXFLAGS=-march=native -fstack-clash-protection -fcf-protection=full
+EXTRA_CXXFLAGS=-march=native -fstack-clash-protection
 INSTALL?=install
 
 SYS=$(shell gcc -dumpmachine)
-ifneq (, $(findstring i386, $(SYS)))
-    EXTRA_CXXFLAGS=-march=native -fstack-clash-protection
+ifneq (, $(findstring x86_64, $(SYS)))
+    EXTRA_CXXFLAGS+=-fcf-protection=full
 endif
 
 all: bench libequihash.so libequihash.a
