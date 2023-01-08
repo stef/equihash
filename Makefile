@@ -10,7 +10,7 @@ ifneq (, $(findstring x86_64, $(SYS)))
     EXTRA_CXXFLAGS+=-fcf-protection=full
 endif
 
-all: bench libequihash.so libequihash.a
+all: libequihash.so libequihash.a
 
 android: EXTRA_SOURCES=jni.cc
 android: CXXFLAGS+=-I$(SODIUM) -I$(SODIUM)/sodium -L.
