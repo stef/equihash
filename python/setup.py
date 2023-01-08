@@ -16,7 +16,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(name = 'pyequihash',
-       version = '0.1',
+       version = '0.2',
        description = 'python bindings for libequihash',
        license = "GPLv3",
        author = 'Stefan Marsiske',
