@@ -2,7 +2,8 @@ CXXFLAGS=-Wall -g -O3 -std=c++17 -fstack-protector-strong -D_FORTIFY_SOURCE=2 -f
 LIBS=-lsodium
 PREFIX?=/usr/local
 SOEXT?=so
-EXTRA_CXXFLAGS=-march=native -fstack-clash-protection
+EXTRA_CXXFLAGS=-fstack-clash-protection
+#EXTRA_CXXFLAGS+=-march=native 
 INSTALL?=install
 
 SYS=$(shell gcc -dumpmachine)
