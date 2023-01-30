@@ -67,9 +67,9 @@ void bench(const uint32_t n, const uint32_t k, const uint32_t iter, const int ve
      }
 
      seed[0]++;
-     if((iter % (1<<8)) == 0 && iter > 0 && seed_len > 1) seed[1]++;
-     if((iter % (1<<16)) == 0 && iter > 0 && seed_len > 2) seed[2]++;
-     if((iter % (1<<24)) == 0 && iter > 0 && seed_len > 3) seed[3]++;
+     if((i % (1<<8)) == 0 && i > 0 && seed_len > 1) seed[1]++;
+     if((i % (1<<16)) == 0 && i > 0 && seed_len > 2) seed[2]++;
+     if((i % (1<<24)) == 0 && i > 0 && seed_len > 3) seed[3]++;
   }
 
   if(verbose) printf("\n");
