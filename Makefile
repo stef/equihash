@@ -27,8 +27,11 @@ libequihash.so: equihash.o Makefile $(EXTRA_SOURCES)
 libequihash.a: equihash.o
 	ar rcs $@ $^
 
-bench: equihash.cc equihash.hpp equihash-test.cc Makefile libequihash.so
-	$(CXX) -Wall -march=native -O3 -std=c++17 equihash-test.cc $(LIBS) -L. -lequihash -o bench
+bench.o: bench.cc
+	$(CXX) -c -g -Wall -march=native -O3 -std=c++17 -o bench.o bench.cc
+
+equihash: main.c bench.o
+	$(CC) -g -Wall -march=native -O3 main.c $(LIBS) bench.o -L. -lequihash -lstdc++ -o equihash
 
 libequihash.pc:
 	echo "prefix=$(PREFIX)" >libequihash.pc
@@ -50,4 +53,4 @@ $(DESTDIR)$(PREFIX)/share/pkgconfig/libequihash.pc: libequihash.pc
 	$(INSTALL) -D -m 0644 $< $@
 
 clean:
-	rm -f bench libequihash.so libequihash.pc libequihash.a equihash.o
+	rm -f libequihash.so libequihash.pc libequihash.a equihash.o bench.o

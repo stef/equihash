@@ -13,8 +13,6 @@ extern "C" {
 #include <assert.h>
 #include <time.h>
 #include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 using namespace _POW;
 
@@ -52,121 +50,21 @@ static uint64_t rdtsc(void) {
 #endif
 }
 
-static void fatal(const char *error) {
-  fprintf(stderr, "Error: %s\n", error);
-  exit(1);
+extern "C" {
+  void bench(const uint32_t n, const uint32_t k, const uint32_t iter, const int verbose, const size_t seed_len, uint8_t *seed);
 }
 
-static void usage(const char *cmd) {
-  printf("Usage: %s  [-n N] [-k K] "
-         "[-s S]\n",
-         cmd);
-  printf("Parameters:\n");
-  printf("\t-n N \t\tSets the tuple length of iterations to N\n");
-  printf("\t-k K\t\tSets the number of steps to K \n");
-  //printf("\t-s S\t\tSets seed  to S\n");
-}
-
-
-int main(int argc, char *argv[]) {
-  uint32_t n = 60, k=4, iter=10;
-  char *seedfn=NULL;
-  if (argc < 2) {
-    usage(argv[0]);
-    return 1;
-  }
-
-  /* parse options */
-  for (int i = 1; i < argc; i++) {
-    const char *a = argv[i];
-    unsigned long input = 0;
-    if (!strcmp(a, "-n")) {
-      if (i < argc - 1) {
-        i++;
-        input = strtoul(argv[i], NULL, 10);
-        if (input == 0 ||
-            input > 255) {
-          fatal("bad numeric input for -n");
-        }
-        n = input;
-        continue;
-      }
-      else {
-        fatal("missing -n argument");
-      }
-    }
-    else if (!strcmp(a, "-k")) {
-      if (i < argc - 1) {
-        i++;
-        input = strtoul(argv[i], NULL, 10);
-        if (input == 0 ||
-            input > 20) {
-          fatal("bad numeric input for -k");
-        }
-        k = input;
-        continue;
-      }
-      else {
-        fatal("missing -k argument");
-      }
-    }
-    else if (!strcmp(a, "-i")) {
-      if (i < argc - 1) {
-        i++;
-        input = strtoul(argv[i], NULL, 10);
-        if (input == 0) {
-          fatal("bad numeric input for -i");
-        }
-        iter = input;
-        continue;
-      }
-      else {
-        fatal("missing -i argument");
-      }
-    }
-    else if (!strcmp(a, "-s")) {
-        if (i < argc - 1) {
-            i++;
-            seedfn = argv[i];
-            continue;
-        }
-        else {
-            fatal("missing -s argument");
-        }
-    }
-  }
-
-  size_t seed_len = 0;
-  if(seedfn==NULL) {
-    seed_len = 16; // debian-style randomly and arbitrarily aus dem arsch gezogen
-  } else {
-    struct stat statbuf;
-    if(0!=stat(seedfn, &statbuf)) {
-      fprintf(stderr, "failed to stat file: %s\n", seedfn);
-      return 1;
-    }
-    seed_len = statbuf.st_size;
-  }
-  uint8_t seed[seed_len];
-  if(seedfn) {
-    FILE *fp = fopen(seedfn, "r");
-    if(1!=fread(seed,sizeof(seed),1, fp)) {
-      fprintf(stderr,"failed to load %s\n", seedfn);
-      return 1;
-    }
-    fclose(fp);
-  } else {
-    memset(seed,0,seed_len);
-  }
+void bench(const uint32_t n, const uint32_t k, const uint32_t iter, const int verbose, const size_t seed_len, uint8_t *seed) {
   //printf("N:\t%" PRIu32 " \n", n);
   //printf("K:\t%" PRIu32 " \n", k);
   //printf("SEED: ");
   //for (unsigned i = 0; i < SEED_LENGTH; ++i) {
   //    printf(" %02x", seed[i]);
   //}
-  printf("%d %d %" PRIu64 "KiB\t%" PRIu64 "\t", n, k, ((((uint32_t)1) << (n / (k + 1)))*LIST_LENGTH*k*sizeof(uint32_t)) / (1UL << 10), solsize(n,k));
+  printf("n = %d k = %d memory needed: %" PRIu64 "KiB\t solution size: %" PRIu64 "\t\n", n, k, ((((uint32_t)1) << (n / (k + 1)))*LIST_LENGTH*k*sizeof(uint32_t)) / (1UL << 10), solsize(n,k));
   double solve_tics=0, verify_tics=0;
   double solve_time=0,  verify_time=0;
+  uint32_t failed = 0;
   for(uint32_t i=0; i<iter; i++) {
      Equihash equihash(n,k,seed, seed_len);
      clock_t cstart, cend;
@@ -178,6 +76,7 @@ int main(int argc, char *argv[]) {
      solve_tics+=(double)(end - start) / (1UL << 20);
      solve_time+=(double)(cend - cstart) / CLOCKS_PER_SEC;
      if(p.inputs.size()==0) {
+       failed++;
        fprintf(stderr,"no solution found\n");
        continue;
      }
@@ -201,11 +100,20 @@ int main(int argc, char *argv[]) {
      verify_tics+=(double)(end - start) / (1UL << 20);
      verify_time+=(double)(cend - cstart) / CLOCKS_PER_SEC;
 
+     if(verbose) {
+       fprintf(stderr, "\r%d\t", i+1);
+       fprintf(stderr, "solve: %2.2ftics\t%fs\t", solve_tics / (i+1), solve_time / (i+1));
+       fprintf(stderr, "verify: %2.2ftics\t%fs\t", verify_tics / (i+1), verify_time / (i+1));
+       fprintf(stderr, "failed: %d", failed);
+     }
+
      seed[0]++;
+     if((iter % (1<<8)) == 0 && iter > 0 && seed_len > 1) seed[1]++;
+     if((iter % (1<<16)) == 0 && iter > 0 && seed_len > 2) seed[2]++;
+     if((iter % (1<<24)) == 0 && iter > 0 && seed_len > 3) seed[3]++;
   }
 
+  if(verbose) printf("\n");
   printf("%2.2f\t%f\t", solve_tics / iter, solve_time / iter);
   printf("%2.2f\t%f\n", verify_tics / iter, verify_time / iter);
-
-  return 0;
 }
