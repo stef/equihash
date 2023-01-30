@@ -10,8 +10,6 @@ CC0 license
 #include <vector>
 #include <cstdio>
 
-const int LIST_LENGTH = 5;
-
 /* The block used to initialize the PoW search
    @v actual values
 */
