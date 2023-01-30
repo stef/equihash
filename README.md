@@ -66,7 +66,7 @@ $ ./equihash solve -v -n 40 -k 4 -f Makefile -s /tmp/s
 And to verify the solution of the previous example:
 ```
 $ ./equihash verify -v -n 40 -k 4 -f Makefile -s /tmp/s
-``
+```
 
 ## Alternative implementations
 
