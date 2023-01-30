@@ -33,24 +33,40 @@ For client puzzles: (60/70/80/90,4), (90/96/102,5).
 
 ## Usage
 
-`make` builds the executable `bench` and the library `libequihash.so`.
+`make` builds the executable `equihash` and the library `libequihash.so`.
 
 ### Command-line utility
 
-`bench` is a command-line utility to test specific Equihash instances
-on your system. To show usage instructions, run
-`./bench` without arguments as
+`equihash` is a command-line utility to benchmark specific Equihash instances
+on your system and to solve challenges and verify solutions. To show usage instructions, run
+`./equihash` without arguments as
+
 ```
-Usage:  ./equihash -n N -k K -s Seed
+ Usage: ./equihash  [bench|solve|verify] [-v] [-n N] [-k K] [-i benchmark iterations][-f file] [-s file]
 Parameters:
-        N               The width (number of bits) of the generalized birthday problem, integer divisible by (K+1)
-        K               The length of the generalized birthday problem, small integer
-        Seed            Seed for the problem, to distinguish between solutions. file.
+        bench           run benchmark
+        solve           solve puzzle
+        verify          verify solution
+        -v              verbose
+        -n N            Sets the tuple length of iterations to N
+        -k K            Sets the number of steps to K
+        -i              sample size for benchmark
+        -f file         Sets seed to file
+        -s file         Sets solution to file
 ```
 For example, to compute Equihash using N=120 and k=5 using this projects Makefile as seed, consuming at least 32 MB of RAM
 ```
 $ ./equihash -n 120 -k 5 -s Makefile
 ```
+
+To solve a challenge consisting of the makefile of this project for N=40 and K=4:
+```
+$ ./equihash solve -v -n 40 -k 4 -f Makefile -s /tmp/s
+```
+And to verify the solution of the previous example:
+```
+$ ./equihash verify -v -n 40 -k 4 -f Makefile -s /tmp/s
+``
 
 ## Alternative implementations
 
