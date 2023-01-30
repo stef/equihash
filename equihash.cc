@@ -251,6 +251,9 @@ int solve(const unsigned n, const unsigned k, const uint8_t *seed, const size_t 
   if(csol_len!=solsize(n,k)) return 0;
   Equihash equihash(n,k,seed, seed_len);
   Proof p = equihash.FindProof();
+  if(p.inputs.size()==0) {
+    return 0;
+  }
   p.serialize(csol, csol_len);
   return 1;
 }
