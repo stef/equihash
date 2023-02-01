@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <unistd.h>
+#include <fcntl.h>
+#include <time.h>
 
 typedef enum {
   undefined,
@@ -38,6 +39,17 @@ static void usage(const char *cmd) {
   printf("\t-s file\t\tSets solution to file\n");
 }
 
+#if _WIN32 == 1 || _WIN64 == 1
+#include <sys/stat.h>
+int is_fd_open(int fd) {
+    struct _stat buf;
+    return _fstat(fd, &buf);
+}
+#else
+int is_fd_open(int fd) {
+    return fcntl(fd, F_GETFD);
+}
+#endif
 
 int main(int argc, char *argv[]) {
   uint32_t n = 60, k=4, iter=10;
@@ -180,10 +192,26 @@ int main(int argc, char *argv[]) {
   if(mode == solve_mode) {
     size_t sol_len = solsize(n, k);
     uint8_t sol[sol_len];
+    FILE *status=NULL;
+    if(-1!=is_fd_open(3)) {
+        status = fdopen(3,"w");
+        if(status==NULL) {
+          perror("error: failed to open fd 3 for status");
+          return 1;
+        }
+    }
+    fprintf(status, "%d %d\n", n, k);
+    fflush(status);
+    clock_t start = clock();
+
     if(!solve(n, k, seed, seed_len, sol, sol_len)) {
       fprintf(stderr,"no solution found\n");
       return 1;
     }
+
+    double delta = (clock() - start) / CLOCKS_PER_SEC;
+    fprintf(status, "%f", delta);
+    fclose(status);
 
     FILE *fp = fopen(solution, "w");
     if(1!=fwrite(sol,sizeof(sol),1, fp)) {
