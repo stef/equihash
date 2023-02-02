@@ -120,7 +120,7 @@ ehpuzzle challenge 80 4 /tmp/data </tmp/key >/tmp/challenge
 All parameters are positional, in this order:
  - N
  - K
- - some arbitrary data
+ - a file containing arbitrary data
 
 The wrapper needs the secret signing key on standard input and will
 write the challenge on standard output.
