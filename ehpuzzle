@@ -1,0 +1,70 @@
+#!/bin/sh
+
+set -e
+
+function usage() {
+    echo "usage:"
+    echo "$ cat secret_key | $0 challenge n k /path/to/data >challenge"
+    echo "$ $0 solve challenge >solution"
+    echo "$ cat secret_key | $0 verify /path/to/challenge /path/to/solution"
+    exit 0
+}
+
+function challenge() {
+    [[ "${#}" -ne 3 ]] && usage
+
+    secret_key="$(cat)"
+    n=$1
+    k=$2
+    data="$(cat $3)"
+    ts="$(date +%s)"
+    sig=$(echo -n "$n $k $ts $data" | openssl dgst -sha256 -binary -hmac "$secret_key")
+    echo -n "$sig$n $k $ts $data"
+}
+
+function solve() {
+    [[ "${#}" -ne 1 ]] && usage
+    puzzle="$1"
+    tail -c +33 "$puzzle" | {
+        read n k ts data || true
+        ehwait equihash solve -n "$n" -k "$k" -f "$puzzle" -s /dev/stdout
+    }
+}
+
+function const_cmp() {
+    res=0
+    for i in $(seq 0 31); do
+        res=$((res | ($(printf "%d" "'${1:i:1}") ^ $(printf "%d" "'${2:i:1}") ) ))
+    done
+    return $res
+}
+#const_cmp "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" && echo ok || echo meh
+#const_cmp "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAb" && echo ok || echo meh
+#const_cmp "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" && echo ok || echo meh
+
+function verify() {
+    [[ "${#}" -ne 2 ]] && usage
+    secret_key="$(cat)"
+    puzzle="$1"
+    solution="$2"
+    sig="$(head -c 32 "$puzzle")"
+    msg="$(tail -c +33 "$puzzle")"
+    echo "$msg" | {
+        read n k ts data || true
+        sig2=$(echo -n "$msg" | openssl dgst -sha256 -binary -hmac "$secret_key")
+        const_cmp "$sig" "$sig2" || {
+            echo "error: invalid challenge"
+            exit 1
+        }
+        equihash verify -v -n "$n" -k "$k" -f "$puzzle" -s "$solution"
+        exit $?
+    }
+}
+
+case "$1" in
+    challenge) shift; challenge "${@}";;
+    solve) shift; solve "${@}";;
+    verify) shift; verify "${@}";;
+    *) usage;;
+esac
+
