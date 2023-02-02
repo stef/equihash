@@ -47,6 +47,7 @@ Parameters:
         bench           run benchmark
         solve           solve puzzle
         verify          verify solution
+        size            calculate size of solution
         -v              verbose
         -n N            Sets the tuple length of iterations to N
         -k K            Sets the number of steps to K
