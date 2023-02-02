@@ -209,7 +209,7 @@ int main(int argc, char *argv[]) {
       return 1;
     }
 
-    double delta = (clock() - start) / CLOCKS_PER_SEC;
+    double delta = ((double)(clock() - start)) / CLOCKS_PER_SEC;
     fprintf(status, "%f", delta);
     fclose(status);
 
