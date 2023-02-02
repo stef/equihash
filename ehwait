@@ -4,7 +4,7 @@ set -e
 
 "${@}" 3> >(
     FRONTEND="${FRONTEND:-pinentry}"
-    DATAPATH="${DATAPATH:-~/.local/share/equihash}"
+    DATAPATH="${DATAPATH:-$HOME/.local/share/equihash}"
     read n k
     [[ -d "$DATAPATH" ]] || mkdir -p "$DATAPATH"
     [[ -f "$DATAPATH/$n-$k" ]] &&
