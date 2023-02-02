@@ -12,6 +12,7 @@ typedef enum {
   bench_mode,
   solve_mode,
   verify_mode,
+  size_mode,
 } equihash_mode_t;
 
 void bench(const uint32_t n, const uint32_t k, const uint32_t iter, const int verbose, const size_t seed_len, uint8_t *seed);
@@ -22,7 +23,7 @@ static void fatal(const char *error) {
 }
 
 static void usage(const char *cmd) {
-  printf("Usage: %s  [bench|solve|verify] [-v] [-n N] [-k K] "
+  printf("Usage: %s  [bench|solve|verify|size] [-v] [-n N] [-k K] "
          "[-i benchmark iterations]"
          "[-f file] "
          "[-s file]\n",
@@ -31,6 +32,7 @@ static void usage(const char *cmd) {
   printf("\tbench \t\trun benchmark\n");
   printf("\tsolve \t\tsolve puzzle\n");
   printf("\tverify \t\tverify solution\n");
+  printf("\tsize \t\tget size of solution solution\n");
   printf("\t-v \t\tverbose\n");
   printf("\t-n N \t\tSets the tuple length of iterations to N\n");
   printf("\t-k K\t\tSets the number of steps to K \n");
@@ -79,6 +81,11 @@ int main(int argc, char *argv[]) {
 
     if (!strcmp(a, "verify")) {
       mode = verify_mode;
+      continue;
+    }
+
+    if (!strcmp(a, "size")) {
+      mode = size_mode;
       continue;
     }
 
@@ -159,7 +166,7 @@ int main(int argc, char *argv[]) {
 
   size_t seed_len = 0;
   if(filename==NULL) {
-    if(mode != bench_mode) {
+    if(mode != bench_mode && mode != size_mode) {
       fatal("must provide input file for non-benchmarking modes\n");
     }
     seed_len = 16; // debian-style randomly and arbitrarily aus dem arsch gezogen
@@ -186,6 +193,11 @@ int main(int argc, char *argv[]) {
 
   if(mode == bench_mode) {
     bench(n, k, iter, verbose, seed_len, seed);
+    return 0;
+  }
+
+  if(mode == size_mode) {
+    printf("%ld\n", solsize(n,k));
     return 0;
   }
 
