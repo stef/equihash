@@ -3,20 +3,23 @@
 set -e
 
 "${@}" 3> >(
+    FRONTEND="${FRONTEND:-pinentry}"
     DATAPATH="${DATAPATH:-~/.local/share/equihash}"
     read n k
     [[ -d "$DATAPATH" ]] || mkdir -p "$DATAPATH"
     [[ -f "$DATAPATH/$n-$k" ]] &&
-        txt="This will take approximately $(awk '{sum+=$1; ++n} END {printf "%.4f\n", sum/n}' <"$DATAPATH/$n-$k") seconds" ||
-        txt="Never saw this difficulty ($n,$k) before, unknown how long it will take"
+        txt="Solving this Equihash challenge will take approximately $(awk '{sum+=$1; ++n} END {printf "%.4f\n", sum/n}' $DATAPATH/$n-$k) seconds" ||
+        txt="Never saw this Equihash difficulty ($n,$k) before, unknown how long it will take.\nPlease wait."
 
-    # could also be pinentry (SETDESC $txt\nMESSSAGE\n wait... QUIT\n)
-    # or some dbus stuff for popup notifications
+    # this could also be some dbus stuff for popup notifications
     # or even conky or other stuff is possible whatever is prefered
-    zenity --progress --pulsate --no-cancel --title "Equihash challenge solving..." --text "$txt" &
+    case "$FRONTEND" in
+        zenity) zenity --progress --pulsate --no-cancel --title "Equihash challenge solving..." --text "$txt" & ;;
+        pinentry) echo -ne "SETTITLE equihash challenge notification\nSETDESC $txt\nMESSAGE\n" | pinentry 1>/dev/null & ;;
+    esac
     pid=$!
 
-    cat >>"$DATAPATH"/$n-$k
-    echo >>"$DATAPATH"/$n-$k
+    read res || true
+    echo "$res" >>"$DATAPATH/$n-$k"
     kill $pid 2>/dev/null
 )
