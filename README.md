@@ -54,24 +54,97 @@ Parameters:
         -f file         Sets seed to file
         -s file         Sets solution to file
 ```
-For example, to compute Equihash using N=120 and k=5 using this projects Makefile as seed, consuming at least 32 MB of RAM
+
+For example, to compute Equihash using N=120 and k=5 using this
+projects Makefile as seed, consuming at least 32 MB of RAM
+
 ```
 $ ./equihash -n 120 -k 5 -s Makefile
 ```
 
-To solve a challenge consisting of the makefile of this project for N=40 and K=4:
+To solve a challenge consisting of the makefile of this project for
+N=40 and K=4:
+
 ```
 $ ./equihash solve -v -n 40 -k 4 -f Makefile -s /tmp/s
 ```
-And to verify the solution of the previous example:
+
+When the equihash CLI frontend is solving a challenge, it emits on fd
+3 a simple protocol that allows better UI integration (see also the
+ehwait wrapper below).
+
+To verify the solution of the previous example:
 ```
 $ ./equihash verify -v -n 40 -k 4 -f Makefile -s /tmp/s
+```
+
+To calculate the size of a solution for a given N and K parameter simply run:
+```
+$ ./equihash size -n 40 -k 4
+22
+```
+
+Additionally there is two simple wrapper scripts provided: ehwait and ehpuzzle.
+
+The `ehwait` wrapper is a simple bash wrapper, which understands the
+following simple notification protocol:
+
+On filedescriptor 3 any tool that supports this (pwdsphinx for example
+does) has to emit the an ASCII string containing the values of N and K
+and terminated by a newline as soon as an equihash calculation is
+started. When the calculation is finished, the time elapsed in seconds
+(with fractions, no terminating newline) is written also as an ASCII
+number to fd 3, the filedescriptor 3 closes immediately after
+this. This allows tools that might use significant time to solve an
+equihash challenge to notify the user about the waiting time.
+
+ehwait supports two frontends: pinentry (default) and zenity, simply
+prefix your call to `equihash` with `ehwait` (and optionally give the
+frontend variable if you have zenity and want that as a frontend.)
+
+```
+$ FRONTEND=zenity ./ehwait ./equihash solve -n 100 -k 4 -f Makefile -s /tmp/s
+```
+
+The other wrapper that comes with equihash is `ehpuzzle`, this is a
+simple bash wrapper which creates secure challenges that cannot be
+predicted or precomputed by solvers. The challenger and the verifer
+need to have a secret cryptographic key of 32 bytes to ensure
+authenticity of the challenges.
+
+To create a challenge:
+```
+ehpuzzle challenge 80 4 /tmp/data </tmp/key >/tmp/challenge
+```
+All parameters are positional, in this order:
+ - N
+ - K
+ - some arbitrary data
+
+The wrapper needs the secret signing key on standard input and will
+write the challenge on standard output.
+
+A solver can then take the challenge and solve it:
+```
+ehpuzzle solve /tmp/challenge >/tmp/solution
+```
+
+The solving mode already makes use of ehwait so a user is also
+notified on the UI that this will take some time.
+
+Finally a verifier (which can be the same as the challenger) verifies
+if the challenge is valid, and if it is it also verifies the solution,
+if it is then the verifier returns with exit code 0:
+
+```
+ehpuzzle verify Makefile /tmp/solution </tmp/key && echo "all is good!"
 ```
 
 ## Alternative implementations
 
 
-* [Zcash](https://github.com/zcash/zcash/) by [@str4d](https://github.com/str4d)
+* [Zcash](https://github.com/zcash/zcash/) by
+  [@str4d](https://github.com/str4d)
 
 ## Intellectual property
 
