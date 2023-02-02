@@ -20,8 +20,3 @@ set -e
     echo >>"$DATAPATH"/$n-$k
     kill $pid 2>/dev/null
 )
-
-
-
-
-
