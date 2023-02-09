@@ -182,6 +182,10 @@ int main(int argc, char *argv[]) {
   uint8_t seed[seed_len];
   if(filename) {
     FILE *fp = fopen(filename, "r");
+    if(fp==NULL) {
+      perror("failed to open seed");
+      return 1;
+    }
     if(1!=fread(seed,sizeof(seed),1, fp)) {
       fprintf(stderr,"failed to load %s\n", filename);
       return 1;
@@ -226,6 +230,10 @@ int main(int argc, char *argv[]) {
     fclose(status);
 
     FILE *fp = fopen(solution, "w");
+    if(fp==NULL) {
+      perror("failed to open solution");
+      return 1;
+    }
     if(1!=fwrite(sol,sizeof(sol),1, fp)) {
       fprintf(stderr,"failed to write solution to %s\n", solution);
       return 1;
