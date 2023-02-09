@@ -32,3 +32,5 @@ bench
 .arch
 python/equihash/__pycache__
 *.pc
+.zshhistory
+equihash
