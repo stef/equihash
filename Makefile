@@ -32,8 +32,8 @@ libequihash.a: equihash.o
 bench.o: bench.cc
 	$(CXX) -c $(CXXFLAGS) -o bench.o bench.cc
 
-equihash: main.c bench.o
-	$(CC) -g $(CFLAGS) main.c $(LIBS) bench.o -L. -lequihash -lstdc++ -o equihash
+equihash: main.c bench.o libequihash.a
+	$(CC) -g $(CFLAGS) main.c $(LIBS) bench.o libequihash.a $(LIBS) -lstdc++ -o equihash
 
 libequihash.pc:
 	echo "prefix=$(PREFIX)" >libequihash.pc
