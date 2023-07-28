@@ -1,3 +1,4 @@
+CFLAGS?=-Wall -g -O3 -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fasynchronous-unwind-tables -fpic -Werror=format-security -Wl,-z,defs -Wl,-z,relro -ftrapv -Wl,-z,noexecstack
 CXXFLAGS?=-Wall -g -O3 -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fasynchronous-unwind-tables -fpic -Werror=format-security -Wl,-z,defs -Wl,-z,relro -ftrapv -Wl,-z,noexecstack
 CXXFLAGS+=-std=c++17
 LIBS=-lsodium
@@ -29,10 +30,10 @@ libequihash.a: equihash.o
 	ar rcs $@ $^
 
 bench.o: bench.cc
-	$(CXX) -c -g -Wall -march=native -O3 -std=c++17 -o bench.o bench.cc
+	$(CXX) -c $(CXXFLAGS) -o bench.o bench.cc
 
 equihash: main.c bench.o
-	$(CC) -g -Wall -march=native -O3 main.c $(LIBS) bench.o -L. -lequihash -lstdc++ -o equihash
+	$(CC) -g $(CFLAGS) main.c $(LIBS) bench.o -L. -lequihash -lstdc++ -o equihash
 
 libequihash.pc:
 	echo "prefix=$(PREFIX)" >libequihash.pc
