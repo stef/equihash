@@ -47,6 +47,7 @@ namespace _POW{
     std::vector<uint32_t> blocks;
     Input reference;
     Tuple(unsigned i) { blocks.resize(i); }
+    Tuple(const Tuple &r) = default;
     Tuple& operator=(const Tuple &r) {
       blocks = r.blocks;
       reference = r.reference;
