@@ -5,7 +5,11 @@ CC0 license
 #include "equihash.hpp"
 #include <sodium.h>
 #include <algorithm>
+#ifdef _MSC_VER
+#include <winsock2.h>
+#else
 #include <arpa/inet.h>
+#endif
 #include <string.h>
 
 extern "C" {
