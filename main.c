@@ -167,7 +167,7 @@ int main(int argc, char *argv[]) {
   size_t seed_len = 0;
   if(filename==NULL) {
     if(mode != bench_mode && mode != size_mode) {
-      fatal("must provide input file for non-benchmarking modes\n");
+      fatal("must provide input file for non-benchmarking modes");
     }
     seed_len = 16; // debian-style randomly and arbitrarily aus dem arsch gezogen
   } else {
