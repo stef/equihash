@@ -39,10 +39,13 @@ libequihash.pc:
 	echo "prefix=$(PREFIX)" >libequihash.pc
 	cat libequihash.pc.skel >>libequihash.pc
 
-install: $(DESTDIR)$(PREFIX)/lib/libequihash.$(SOEXT) $(DESTDIR)$(PREFIX)/lib/libequihash.a $(DESTDIR)$(PREFIX)/include/equihash.h $(DESTDIR)$(PREFIX)/share/pkgconfig/libequihash.pc $(DESTDIR)$(PREFIX)/bin/equihash $(DESTDIR)$(PREFIX)/bin/ehwait $(DESTDIR)$(PREFIX)/bin/ehpuzzle
+install: $(DESTDIR)$(PREFIX)/lib/libequihash.$(SOEXT) $(DESTDIR)$(PREFIX)/lib/libequihash.a $(DESTDIR)$(PREFIX)/include/equihash.h $(DESTDIR)$(PREFIX)/share/pkgconfig/libequihash.pc $(DESTDIR)$(PREFIX)/bin/equihash $(DESTDIR)$(PREFIX)/bin/ehwait $(DESTDIR)$(PREFIX)/bin/ehpuzzle $(DESTDIR)$(PREFIX)/lib/libequihash.$(SOEXT).0
 
 $(DESTDIR)$(PREFIX)/lib/libequihash.$(SOEXT): libequihash.$(SOEXT)
 	$(INSTALL) -D $< $@
+
+$(DESTDIR)$(PREFIX)/lib/libequihash.$(SOEXT).0: $(DESTDIR)$(PREFIX)/lib/libequihash.$(SOEXT)
+	ln -s $< $@
 
 $(DESTDIR)$(PREFIX)/lib/libequihash.a: libequihash.a
 	$(INSTALL) -D -m 0644 $< $@
