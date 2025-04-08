@@ -42,7 +42,7 @@ on your system and to solve challenges and verify solutions. To show usage instr
 `./equihash` without arguments as
 
 ```
- Usage: ./equihash  [bench|solve|verify] [-v] [-n N] [-k K] [-i benchmark iterations][-f file] [-s file]
+ Usage: ./equihash  [bench|solve|verify|size] [-v] [-n N] [-k K] [-i benchmark iterations][-f file] [-s file]
 Parameters:
         bench           run benchmark
         solve           solve puzzle
