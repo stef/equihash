@@ -10,6 +10,8 @@ pub fn build(b: *std.Build) !void {
         .root_module = b.createModule(.{
             .target = target,
             .optimize = optimize,
+            .link_libc = true,
+            .link_libcpp = true,
         }),
     });
 
@@ -20,12 +22,10 @@ pub fn build(b: *std.Build) !void {
         .static = true,
         .shared = false
     });
-    static_lib.linkLibrary(libsodium_package.artifact("sodium"));
-    static_lib.addIncludePath(libsodium_package.path("include"));
+    static_lib.root_module.linkLibrary(libsodium_package.artifact("sodium"));
+    static_lib.root_module.addIncludePath(libsodium_package.path("include"));
 
     b.installArtifact(static_lib);
-    static_lib.linkLibC();
-    static_lib.linkLibCpp();
 
     const flags = &.{
         "-fvisibility=hidden",
@@ -34,7 +34,7 @@ pub fn build(b: *std.Build) !void {
         "-std=c++17",
     };
 
-    static_lib.addCSourceFile(.{ .file = b.path("equihash.cc"), .flags = flags, });
+    static_lib.root_module.addCSourceFile(.{ .file = b.path("equihash.cc"), .flags = flags, });
     static_lib.installHeader(b.path("equihash.h"), "equihash/equihash.h");
     static_lib.installHeader(b.path("equihash.hpp"), "equihash/equihash.hpp");
 }
